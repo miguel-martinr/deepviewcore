@@ -1,8 +1,7 @@
-from msilib.schema import Error
-from sys import api_version
 import cv2 as cv
 
-from process.detect_objects import detect_objects_in_frame, draw_contours
+
+from process.detect_objects import draw_connected_components, get_connected_components
 
 
 class Video:
@@ -11,7 +10,7 @@ class Video:
         self.path = path
         self.cap = cv.VideoCapture(self.path, apiPreference=cv.CAP_FFMPEG)
         self.data = {
-            "contours_per_frame": [],
+            "connected_components_per_frame": [],
         }
 
         if not self.cap.isOpened():
@@ -32,7 +31,7 @@ class Video:
         print("Procesando vídeo...")
 
         cap = self.cap
-        self.data["contours_per_frame"] = []  # Reset contours_per_frame
+        self.data["connected_components"] = []  # Reset contours_per_frame
 
         while cap.isOpened():
             ret, frame = cap.read()
@@ -40,15 +39,15 @@ class Video:
                 break
 
             # Detect objects
-            contours = detect_objects_in_frame(frame)
-            self.data["contours_per_frame"].append(contours)
+            cc = get_connected_components(frame)
+            self.data["connected_components_per_frame"].append(cc)
 
             # Draw contours
             if showContours:
                 drawed = frame.copy()
-                draw_contours(drawed, contours)
-                cv.imshow("Contours", drawed)
-                if cv.waitKey(1) & 0xFF == ord('q'):
+                draw_connected_components(drawed, cc)
+                cv.imshow("CC", drawed)
+                if cv.waitKey() & 0xFF == ord('q'):
                     break
 
         

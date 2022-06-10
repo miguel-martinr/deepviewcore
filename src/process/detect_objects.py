@@ -1,7 +1,11 @@
 import cv2 as cv
-
-from process.filters.top_hat import top_hat
 from process.preprocess_frame import preprocess_frame
+
+def get_connected_components(frame):
+  preprocessed_frame = preprocess_frame(frame)
+  thresh = cv.threshold(preprocessed_frame, 20, 255, cv.THRESH_BINARY)[1]
+  connected_components = cv.connectedComponentsWithStats(thresh, 4, cv.CV_32S)
+  return connected_components
 
 
 def detect_objects_in_frame(frame):
@@ -14,6 +18,18 @@ def detect_objects_in_frame(frame):
     return cnts
 
 
+def draw_connected_components(frame, cc):
+    (numLabels, labels, stats, centroids) = cc
+    for i in range(1, numLabels):
+      x = stats[i, cv.CC_STAT_LEFT]
+      y = stats[i, cv.CC_STAT_TOP]
+      w = stats[i, cv.CC_STAT_WIDTH]
+      h = stats[i, cv.CC_STAT_HEIGHT]
+      cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    # for (x, y) in centroids:
+    #     center = (int(x), int(y))
+    #     cv.circle(frame, center, 5, (0, 255, 0), -1)
+        
 def draw_contours(frame, contours):
     for cnt in contours:
       (x, y), radius = cv.minEnclosingCircle(cnt)
