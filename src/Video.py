@@ -26,12 +26,12 @@ class Video:
     def reset(self):
         self.cap.set(cv.CAP_PROP_POS_FRAMES, 0)
 
-
     def process(self, showContours: bool = False):
         print("Procesando vídeo...")
 
         cap = self.cap
         self.data["connected_components"] = []  # Reset contours_per_frame
+        frameRate = int(self.getFrameRate())
 
         while cap.isOpened():
             ret, frame = cap.read()
@@ -47,7 +47,7 @@ class Video:
                 drawed = frame.copy()
                 draw_connected_components(drawed, cc)
                 cv.imshow("CC", drawed)
-                if cv.waitKey() & 0xFF == ord('q'):
+                if cv.waitKey(frameRate) & 0xFF == ord('q'):
                     break
 
         
@@ -55,3 +55,10 @@ class Video:
             cv.destroyAllWindows()
         print("Vídeo procesado")
 
+    def getConnectedComponents(self):
+        return self.data["connected_components"]
+
+    def getFrameRate(self):
+        if self.cap:
+          return self.cap.get(cv.CAP_PROP_FPS)
+        return None
