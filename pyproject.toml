@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "deepviewcore"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Miguel Martín <alu0101209777@ull.edu.es>"]
 packages = [
