@@ -2,8 +2,7 @@ from enum import Enum
 import cv2 as cv
 import time
 
-from process.detect_objects import detect_objects_in_frame, draw_contours
-
+from .process.detect_objects import detect_objects_in_frame, draw_contours
 
 
 class DataFields:

@@ -1,5 +1,5 @@
 import cv2 as cv
-from process.preprocess_frame import preprocess_frame
+from .preprocess_frame import preprocess_frame
 
 
 def detect_objects_in_frame(frame):
