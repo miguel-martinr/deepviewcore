@@ -1,4 +1,5 @@
 from enum import Enum
+import os
 import cv2 as cv
 import time
 
@@ -6,7 +7,9 @@ from .process.detect_objects import detect_objects_in_frame, draw_contours
 
 
 class DataFields:
-  objects = "objects"    
+  objects = "objects"
+
+
 class Video:
 
     def __init__(self, path: str):
@@ -41,9 +44,9 @@ class Video:
             # Detect objects
             # st = time.time()
 
-
             contours = detect_objects_in_frame(frame)
-            objects = map(lambda cnt: {"circle": cv.minEnclosingCircle(cnt), "area": cv.contourArea(cnt)}, contours)
+            objects = map(lambda cnt: {"circle": cv.minEnclosingCircle(
+                cnt), "area": cv.contourArea(cnt)}, contours)
 
             # et = time.time()
             # print(f"Tiempo de ejecución: {et - st}")
@@ -57,7 +60,6 @@ class Video:
                 if cv.waitKey(frameRate) & 0xFF == ord('q'):
                     break
 
-        
         if (showContours):
             cv.destroyAllWindows()
         print("Vídeo procesado")
@@ -65,18 +67,26 @@ class Video:
     def getConnectedComponents(self):
         return self.data["connected_components"]
 
-
-
-    # Stats 
+    # Stats
 
     def getStats(self):
+        """Gets video stats.
+        A video stats is a dictionary with the following keys:
+         - path: video path
+         - size_in_bytes: video size in bytes
+         - duration_in_seconds: video duration in seconds
+         - fps: video frames per second
+        """
         return {
             "path": self.path,
-            "num_of_frames": self.numOfFrames(),
-            "frame_rate": self.getFrameRate(),
+            "size_in_bytes": self.getSizeInMB(),
             "duration_in_seconds": self.getDurationInSeconds(),
+            "fps": self.getFrameRate(),
         }
 
+    def getSizeInMB(self):
+        return os.path.getsize(self.path) / (1024 * 1024)
+        
     def numOfFrames(self):
         return int(self.cap.get(cv.CAP_PROP_FRAME_COUNT))
 
