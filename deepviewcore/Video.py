@@ -29,7 +29,7 @@ class Video:
     def reset(self):
         self.cap.set(cv.CAP_PROP_POS_FRAMES, 0)
 
-    def process(self, showContours: bool = False):
+    def process(self, action = lambda objects: None, showContours: bool = False):
         print("Procesando vídeo...")
 
         cap = self.cap
@@ -50,7 +50,9 @@ class Video:
 
             # et = time.time()
             # print(f"Tiempo de ejecución: {et - st}")
+            action(objects)
             self.data[DataFields.objects].append(objects)
+
 
             # Draw contours
             if showContours:
