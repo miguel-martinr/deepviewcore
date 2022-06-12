@@ -20,9 +20,6 @@ class Video:
             print(f"No se pudo abrir el vídeo \"{self.path}\"")
             exit(1)
 
-    def numOfFrames(self):
-        return int(self.cap.get(cv.CAP_PROP_FRAME_COUNT))
-
     def __str__(self) -> str:
         return self.path
 
@@ -68,7 +65,26 @@ class Video:
     def getConnectedComponents(self):
         return self.data["connected_components"]
 
+
+
+    # Stats 
+
+    def getStats(self):
+        return {
+            "path": self.path,
+            "num_of_frames": self.numOfFrames(),
+            "frame_rate": self.getFrameRate(),
+            "duration_in_seconds": self.getDurationInSeconds(),
+        }
+
+    def numOfFrames(self):
+        return int(self.cap.get(cv.CAP_PROP_FRAME_COUNT))
+
     def getFrameRate(self):
         if self.cap:
           return self.cap.get(cv.CAP_PROP_FPS)
         return None
+
+    def getDurationInSeconds(self):
+        return self.numOfFrames() / self.getFrameRate()
+
