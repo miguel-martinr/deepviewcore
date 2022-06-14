@@ -13,6 +13,7 @@ class DataFields:
 class Video:
 
     def __init__(self, path: str):
+        self.keep_processing = False
         self.path = path
         self.cap = cv.VideoCapture(self.path, apiPreference=cv.CAP_FFMPEG)
         self.data = {
@@ -31,12 +32,12 @@ class Video:
 
     def process(self, action = lambda objects: None, showContours: bool = False):
         print("Procesando vídeo...")
-
+        self.keep_processing = True
         cap = self.cap
         self.data[DataFields.objects] = []  # Reset contours_per_frame
         frameRate = int(self.getFrameRate())
 
-        while cap.isOpened():
+        while cap.isOpened() and self.keep_processing:
             ret, frame = cap.read()
             if not ret:
                 break
@@ -99,4 +100,8 @@ class Video:
 
     def getDurationInSeconds(self):
         return self.numOfFrames() / self.getFrameRate()
+
+
+    def stop_processing(self):
+        self.keep_processing = False
 
