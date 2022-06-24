@@ -2,8 +2,19 @@ import cv2 as cv
 from .preprocess_frame import preprocess_frame
 
 
-def detect_objects_in_frame(frame):
-    preprocessed_frame = preprocess_frame(frame)
+defaultOptions = {
+  "preprocess": {
+    "top_hat": {
+      "filterSize": (2, 2)
+    },
+
+    "to_gray": None,
+    "denoise": None,
+  },  
+}
+
+def detect_objects_in_frame(frame, options = defaultOptions):
+    preprocessed_frame = preprocess_frame(frame, options["preprocess"])
 
     thresh = cv.threshold(preprocessed_frame, 20, 255, cv.THRESH_BINARY)[1]
 
