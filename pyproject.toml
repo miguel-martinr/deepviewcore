@@ -7,10 +7,14 @@ packages = [
   { include = "deepviewcore" },
 ]
 
+
 [tool.poetry.dependencies]
 python = "^3.9"
 opencv-python = "*"
 numpy = "*"
+
+[tool.poetry.scripts]
+test = "deepviewcore.shell:start"
 
 [tool.poetry.dev-dependencies]
 

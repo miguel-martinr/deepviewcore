@@ -7,7 +7,7 @@ def detect_objects_in_frame(frame):
 
     thresh = cv.threshold(preprocessed_frame, 20, 255, cv.THRESH_BINARY)[1]
 
-    cnts, hierarchy = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    cnts, _ = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     return cnts
     
         
