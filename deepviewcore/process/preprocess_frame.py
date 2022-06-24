@@ -3,7 +3,6 @@ from deepviewcore.filters import preprocess
 
 def preprocess_frame(frame, options):
     preprocessed = frame
-    print(options)
     for meta in preprocess:
         filter = meta["filter"]
         
