@@ -10,6 +10,15 @@ class DataFields:
   frames = "frames"
 
 
+defaultOptions = {
+  "preprocess": {
+    "top_hat": {
+      "filterSize": (9, 9)
+    },
+    "denoise": None,
+  },  
+}
+
 class Video:
 
     def __init__(self, path: str):
@@ -31,7 +40,7 @@ class Video:
     def reset(self):
         self.cap.set(cv.CAP_PROP_POS_FRAMES, 0)
 
-    def process(self, action = lambda objects: None, showContours: bool = False):
+    def process(self, options = defaultOptions, action = lambda objects: None, showContours: bool = False):
         print("Procesando vídeo...")
         self.keep_processing = True
         cap = self.cap
@@ -46,7 +55,7 @@ class Video:
             # Detect objects
             # st = time.time()
 
-            contours = detect_objects_in_frame(frame)
+            contours = detect_objects_in_frame(frame, options=options)
             objects = map(lambda cnt: {"circle": cv.minEnclosingCircle(
                 cnt), "area": cv.contourArea(cnt)}, contours)
 
@@ -58,8 +67,6 @@ class Video:
             if ((self.getCurrentFrameIndex() % self.frame_interval) == 0) or self.getCurrentFrameIndex() == self.numOfFrames() - 1:
               action(self.data[DataFields.frames])
               self.data[DataFields.frames] = []
-
-            
 
 
             # Draw contours
