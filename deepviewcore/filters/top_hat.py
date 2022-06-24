@@ -1,10 +1,6 @@
 import cv2 as cv
 
-default_params = {
-  "filterSize": (9, 9)
-}
-
-def top_hat(frame, params = default_params):
+def top_hat(frame, params):
     """Performs a top-hat operation on the given frame and returns the result."""
     # Getting the kernel to be used in Top-Hat
     filterSize = params["filterSize"]
@@ -18,3 +14,10 @@ def top_hat(frame, params = default_params):
                                  kernel)
 
     return filtered_frame
+
+filter = {
+  "name": "top_hat",
+  "filter": top_hat,
+  "options": {"filterSize": (9, 9)},
+}
+
