@@ -17,6 +17,8 @@ defaultOptions = {
     },
     "denoise": None,
   },  
+
+  "process": {},
 }
 
 class Video:

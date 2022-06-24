@@ -2,6 +2,7 @@
 from deepviewcore.filters import top_hat
 from deepviewcore.filters import denoise
 from deepviewcore.filters import to_gray
+from deepviewcore.filters import threshold
 
 # Filtros a aplicar sobre cada frame
 preprocess = [
@@ -13,4 +14,8 @@ preprocess = [
 
     # Quitar ruido
     denoise.filter,  # Actualmente no hace nada  
+]
+
+process = [
+    threshold.filter
 ]

@@ -1,9 +1,9 @@
-from deepviewcore.filters import preprocess
+from deepviewcore.filters import process
 
 
-def preprocess_frame(frame, options):
-    preprocessed = frame
-    for meta in preprocess:
+def process_frame(frame, options):
+    processed = frame
+    for meta in process:
         filter = meta["filter"]
         
         # Add default options
@@ -18,7 +18,7 @@ def preprocess_frame(frame, options):
         if specific_options is not None:                                
             # Merge default and specific options
             filter_options.update(specific_options) 
-                                                 
-        preprocessed = filter(preprocessed, filter_options)
+                                           
+        processed = filter(processed, filter_options)
 
-    return preprocessed
+    return processed

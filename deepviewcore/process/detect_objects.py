@@ -1,13 +1,24 @@
 import cv2 as cv
+
+from deepviewcore.process.process_frame import process_frame
 from .preprocess_frame import preprocess_frame
 
 
 def detect_objects_in_frame(frame, options):
-    preprocessed_frame = preprocess_frame(frame, options["preprocess"])
 
-    thresh = cv.threshold(preprocessed_frame, 20, 255, cv.THRESH_BINARY)[1]
+    preprocess_options = options.get("preprocess")
+    process_options = options.get("process")
 
-    cnts, _ = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    if preprocess_options is None:
+      preprocess_options = {}
+    if process_options is None:
+      process_options = {}
+
+    preprocessed_frame = preprocess_frame(frame, preprocess_options)
+
+    processed_frame = process_frame(preprocessed_frame, process_options)
+
+    cnts, _ = cv.findContours(processed_frame, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     return cnts
     
         
