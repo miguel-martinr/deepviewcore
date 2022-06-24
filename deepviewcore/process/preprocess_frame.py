@@ -17,8 +17,10 @@ def preprocess_frame(frame, options):
 
         if specific_options is not None:                                
             # Merge default and specific options
-            filter_options.update(specific_options)                        
-
+            filter_options.update(specific_options) 
+                                   
+        print(f"###OPTIONS: ")
+        print(filter_options)
         preprocessed = filter(preprocessed, filter_options)
 
     return preprocessed
