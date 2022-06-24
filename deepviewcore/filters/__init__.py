@@ -5,12 +5,12 @@ from deepviewcore.filters.to_gray import to_gray
 
 # Filtros a aplicar sobre cada frame
 preprocess = [
-        # Homogeneizar fondo
-        {"filter": top_hat, "options": {"filterSize": (9, 9)}},
-        
-        # Pasar a escala de grises
-        {"filter": to_gray, "options": None},
+    # Homogeneizar fondo
+    {"filter": top_hat, "options": {"filterSize": (9, 9)}},
 
-        # Quitar ruido
-        {"filter": denoise, "options": None} # Actualmente no hace nada
-    ]
+    # Pasar a escala de grises
+    {"filter": to_gray, "options": None},
+
+    # Quitar ruido
+    {"filter": denoise, "options": None}  # Actualmente no hace nada
+]
