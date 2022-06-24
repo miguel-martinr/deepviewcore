@@ -7,7 +7,7 @@ from .process.detect_objects import detect_objects_in_frame, draw_contours
 
 
 class DataFields:
-  objects = "objects"
+  frames = "frames"
 
 
 class Video:
@@ -17,9 +17,10 @@ class Video:
         self.path = path
         self.cap = cv.VideoCapture(self.path, apiPreference=cv.CAP_FFMPEG)
         self.data = {
-            DataFields.objects: [],
+            DataFields.frames: [],
         }
 
+        self.frame_interval = 1 # Frame intevral for executing action passed to process method 
         if not self.cap.isOpened():
             print(f"No se pudo abrir el vídeo \"{self.path}\"")
             exit(1)
@@ -34,7 +35,7 @@ class Video:
         print("Procesando vídeo...")
         self.keep_processing = True
         cap = self.cap
-        self.data[DataFields.objects] = []  # Reset contours_per_frame
+        self.data[DataFields.frames] = []  # Reset contours_per_frame
         frameRate = int(self.getFrameRate())
 
         while cap.isOpened() and self.keep_processing:
@@ -51,8 +52,14 @@ class Video:
 
             # et = time.time()
             # print(f"Tiempo de ejecución: {et - st}")
-            action(objects)
-            self.data[DataFields.objects].append(objects)
+
+            self.data[DataFields.frames].append(objects)
+
+            if ((self.getCurrentFrameIndex() % self.frame_interval) == 0) or self.getCurrentFrameIndex() == self.numOfFrames() - 1:
+              action(self.data[DataFields.frames])
+              self.data[DataFields.frames] = []
+
+            
 
 
             # Draw contours
@@ -76,13 +83,13 @@ class Video:
         """Gets video stats.
         A video stats is a dictionary with the following keys:
          - path: video path
-         - size_in_bytes: video size in bytes
+         - size_in_MB: video size in MB
          - duration_in_seconds: video duration in seconds
          - fps: video frames per second
         """
         return {
             "path": self.path,
-            "size_in_bytes": self.getSizeInMB(),
+            "size_in_MB": self.getSizeInMB(),
             "duration_in_seconds": self.getDurationInSeconds(),
             "fps": self.getFrameRate(),
         }
@@ -101,6 +108,8 @@ class Video:
     def getDurationInSeconds(self):
         return self.numOfFrames() / self.getFrameRate()
 
+    def getCurrentFrameIndex(self):
+        return int(self.cap.get(cv.CAP_PROP_POS_FRAMES)) - 1
 
     def stop_processing(self):
         self.keep_processing = False
