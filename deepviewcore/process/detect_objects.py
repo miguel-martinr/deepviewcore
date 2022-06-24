@@ -5,10 +5,8 @@ from .preprocess_frame import preprocess_frame
 defaultOptions = {
   "preprocess": {
     "top_hat": {
-      "filterSize": (2, 2)
+      "filterSize": (9, 9)
     },
-
-    "to_gray": None,
     "denoise": None,
   },  
 }
