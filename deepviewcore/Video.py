@@ -123,3 +123,7 @@ class Video:
     def stop_processing(self):
         self.keep_processing = False
 
+    def setFrameIndex(self, newFrameIndex):
+        self.cap.set(cv.CAP_PROP_POS_FRAMES, newFrameIndex + 1)
+
+

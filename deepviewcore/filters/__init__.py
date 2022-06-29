@@ -16,6 +16,14 @@ preprocess = [
     denoise.filter,  # Actualmente no hace nada  
 ]
 
+
 process = [
     threshold.filter
 ]
+
+
+
+
+
+
+

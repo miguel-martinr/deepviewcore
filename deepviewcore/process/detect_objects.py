@@ -32,5 +32,6 @@ def draw_contours(frame, contours):
       area = "{:6.2f}".format(cv.contourArea(cnt))
       font = cv.FONT_HERSHEY_SIMPLEX
       cv.putText(frame, area, (int(x + radius), int(y + radius)), font, 0.5, (0, 255, 0), 2, cv.LINE_AA)
+      cv.putText(frame, f"Total: {len(contours)}", (10, 80), font, 3, (0, 0, 255), 2, cv.LINE_AA)
       cv.circle(frame, center, radius, (0, 255, 0), 2)
       
