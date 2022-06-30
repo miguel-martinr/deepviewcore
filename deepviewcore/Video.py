@@ -55,10 +55,10 @@ class Video:
                 break
             
             # Process frame
-            [contours, objects] = self.processFrame(frame, options=options)
+            [contours, objects] = self.processFrame(options=options, frame=frame)
 
             self.data[DataFields.frames].append(objects)
-            
+
             if ((self.getCurrentFrameIndex() % self.frame_interval) == 0) or self.getCurrentFrameIndex() == self.numOfFrames() - 1:
               action(self.data[DataFields.frames])
               self.data[DataFields.frames] = []
@@ -119,11 +119,17 @@ class Video:
     def setFrameIndex(self, newFrameIndex):
         self.cap.set(cv.CAP_PROP_POS_FRAMES, newFrameIndex + 1)
 
-    def processFrame(self, frame, options):
+    def processFrame(self, options, frame = None):
         
         # Detect objects
-        # st = time.time()
 
+        if frame is None:
+          ret, frame = self.cap.read()
+          if not ret:
+            return [None, None]
+            
+        # st = time.time()
+        
         contours = detect_objects_in_frame(frame, options=options)
         objects = map(lambda cnt: {"circle": cv.minEnclosingCircle(
             cnt), "area": cv.contourArea(cnt)}, contours)
