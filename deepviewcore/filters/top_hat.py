@@ -5,6 +5,9 @@ def top_hat(frame, options):
     """Performs a top-hat operation on the given frame and returns the result."""
     # Getting the kernel to be used in Top-Hat
 
+    if frame is None:
+      return None
+      
     filterSize = options["filterSize"]
     se = options["se"]
 
