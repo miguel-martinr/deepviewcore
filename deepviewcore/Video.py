@@ -48,12 +48,13 @@ class Video:
         self.cap.set(cv.CAP_PROP_POS_FRAMES, 0)
 
     def process(self, options = defaultOptions, action = lambda objects: None, showContours: bool = False):
-        print("Procesando vídeo...")
+        
         self.keep_processing = True
         cap = self.cap
         self.data[DataFields.frames] = []  # Reset contours_per_frame
         frameRate = int(self.getFrameRate())
 
+        detectedEvents = []
         while cap.isOpened() and self.keep_processing:
             ret, frame = cap.read()
             if not ret:
@@ -63,10 +64,15 @@ class Video:
             [contours, objects, events] = self.processFrame(options=options, frame=frame)
 
             self.data[DataFields.frames].append(objects)
+            detectedEvents.extend(events)
 
             if ((self.getCurrentFrameIndex() % self.frame_interval) == 0) or self.getCurrentFrameIndex() == self.numOfFrames() - 1:
-              action(self.data[DataFields.frames])
+              detectedObjects = self.data[DataFields.frames]              
+              
+              action([detectedObjects, detectedEvents])
+              
               self.data[DataFields.frames] = []
+              detectedEvents = []
 
 
             # Draw contours
