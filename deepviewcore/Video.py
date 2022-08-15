@@ -85,7 +85,7 @@ class Video:
 
         if (showContours):
             cv.destroyAllWindows()
-        print("Vídeo procesado")
+        
 
     def getConnectedComponents(self):
         return self.data["connected_components"]
