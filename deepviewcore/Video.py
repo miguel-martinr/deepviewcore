@@ -39,7 +39,7 @@ class Video:
         self.frame_interval = 1 # Frame intevral for executing action passed to process method 
         if not self.cap.isOpened():
             print(f"No se pudo abrir el vídeo \"{self.path}\"")
-            exit(1)
+            
 
     def __str__(self) -> str:
         return self.path
