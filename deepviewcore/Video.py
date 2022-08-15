@@ -19,6 +19,11 @@ defaultOptions = {
   },  
 
   "process": {},
+
+  "events": {
+    "minArea": 100,
+    "active": True,
+  }
 }
 
 class Video:
@@ -55,7 +60,7 @@ class Video:
                 break
             
             # Process frame
-            [contours, objects] = self.processFrame(options=options, frame=frame)
+            [contours, objects, events] = self.processFrame(options=options, frame=frame)
 
             self.data[DataFields.frames].append(objects)
 
@@ -134,9 +139,11 @@ class Video:
         objects = map(lambda cnt: {"circle": cv.minEnclosingCircle(
             cnt), "area": cv.contourArea(cnt)}, contours)
 
+        events = filter(lambda obj: obj["area"] > options["events"]["minArea"], objects)
+
         # et = time.time()
         # print(f"Tiempo de ejecución: {et - st}")
-        return [contours, objects]
+        return [contours, objects, events]
 
 
 
