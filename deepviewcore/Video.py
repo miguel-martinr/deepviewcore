@@ -7,24 +7,24 @@ from .process.detect_objects import detect_objects_in_frame, draw_contours
 
 
 class DataFields:
-  frames = "frames"
+    frames = "frames"
 
 
 defaultOptions = {
-  "preprocess": {
-    "top_hat": {
-      "filterSize": (9, 9)
+    "preprocess": {
+        "top_hat": {
+            "filterSize": (9, 9)
+        },
+        "denoise": None,
     },
-    "denoise": None,
-  },  
 
-  "process": {},
+    "process": {},
 
-  "events": {
-    "minArea": 100,
-    "active": True,
-  }
+    "events": {
+        "minArea": 100,        
+    }
 }
+
 
 class Video:
 
@@ -36,10 +36,9 @@ class Video:
             DataFields.frames: [],
         }
 
-        self.frame_interval = 1 # Frame intevral for executing action passed to process method 
+        self.frame_interval = 1  # Frame intevral for executing action passed to process method
         if not self.cap.isOpened():
             print(f"No se pudo abrir el vídeo \"{self.path}\"")
-            
 
     def __str__(self) -> str:
         return self.path
@@ -47,33 +46,56 @@ class Video:
     def reset(self):
         self.cap.set(cv.CAP_PROP_POS_FRAMES, 0)
 
-    def process(self, options = defaultOptions, action = lambda objects: None, showContours: bool = False):
-        
+    def process(self, options=defaultOptions, action=lambda objects: None, showContours: bool = False):
+
         self.keep_processing = True
         cap = self.cap
         self.data[DataFields.frames] = []  # Reset contours_per_frame
+
         frameRate = int(self.getFrameRate())
 
-        detectedEvents = []
+        # Events options
+        eventsOptions = options["events"]
+        if eventsOptions is None:
+            eventsOptions = defaultOptions["events"]
+
+        nextFrameToLookForEvents = 0
+        detectedEvents = {}
+
         while cap.isOpened() and self.keep_processing:
             ret, frame = cap.read()
             if not ret:
                 break
-            
+
+
             # Process frame
-            [contours, objects, events] = self.processFrame(options=options, frame=frame)
+            [contours, objects] = self.processFrame(
+                options=options, frame=frame)
+            
+            # Should look for events?
+            if self.getCurrentFrameIndex() >= nextFrameToLookForEvents:
+                events = self.lookForEvents(objects, eventsOptions)
+            else:
+                events = []                
+          
 
+            if events:
+                currentSecond = self.getSecondForFrameIndex(self.getCurrentFrameIndex())
+                detectedEvents.update({currentSecond: events})
+                nextFrameToLookForEvents = (currentSecond + 1) * frameRate
+
+            # Save processing results in instance
             self.data[DataFields.frames].append(objects)
-            detectedEvents.extend(events)
+            
 
+            # Run callback
             if ((self.getCurrentFrameIndex() % self.frame_interval) == 0) or self.getCurrentFrameIndex() == self.numOfFrames() - 1:
-              detectedObjects = self.data[DataFields.frames]              
-              
-              action([detectedObjects, detectedEvents])
-              
-              self.data[DataFields.frames] = []
-              detectedEvents = []
+                detectedObjects = self.data[DataFields.frames]
 
+                action([detectedObjects, detectedEvents])
+
+                self.data[DataFields.frames] = []
+                detectedEvents = {}
 
             # Draw contours
             if showContours:
@@ -85,7 +107,6 @@ class Video:
 
         if (showContours):
             cv.destroyAllWindows()
-        
 
     def getConnectedComponents(self):
         return self.data["connected_components"]
@@ -109,13 +130,13 @@ class Video:
 
     def getSizeInMB(self):
         return os.path.getsize(self.path) / (1024 * 1024)
-        
+
     def numOfFrames(self):
         return int(self.cap.get(cv.CAP_PROP_FRAME_COUNT))
 
     def getFrameRate(self):
         if self.cap:
-          return self.cap.get(cv.CAP_PROP_FPS)
+            return self.cap.get(cv.CAP_PROP_FPS)
         return None
 
     def getDurationInSeconds(self):
@@ -130,26 +151,39 @@ class Video:
     def setFrameIndex(self, newFrameIndex):
         self.cap.set(cv.CAP_PROP_POS_FRAMES, newFrameIndex + 1)
 
-    def processFrame(self, options, frame = None):
-        
+    def getSecondForFrameIndex(self, frameIndex):
+        return round(frameIndex / self.getFrameRate())
+
+    def lookForEvents(self, objects, options):
+        """Looks for events in the contours detected in the current frame.
+        """
+        minArea = options["minArea"]
+        events = []
+
+        for object in objects:
+            if object['area'] >= minArea:
+                events.append(object)
+
+        return events
+  
+
+
+    def processFrame(self, options, frame=None):
+
         # Detect objects
 
         if frame is None:
-          ret, frame = self.cap.read()
-          if not ret:
-            return [None, None]
-            
+            ret, frame = self.cap.read()
+            if not ret:
+                return [None, None]
+
         # st = time.time()
-        
+
         contours = detect_objects_in_frame(frame, options=options)
         objects = map(lambda cnt: {"circle": cv.minEnclosingCircle(
-            cnt), "area": cv.contourArea(cnt)}, contours)
-
-        events = filter(lambda obj: obj["area"] > options["events"]["minArea"], objects)
+            cnt), "area": cv.contourArea(cnt)}, contours)        
+        
 
         # et = time.time()
         # print(f"Tiempo de ejecución: {et - st}")
-        return [contours, objects, events]
-
-
-
+        return [contours, objects]
