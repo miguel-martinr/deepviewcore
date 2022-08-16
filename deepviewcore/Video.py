@@ -55,7 +55,7 @@ class Video:
         frameRate = int(self.getFrameRate())
 
         # Events options
-        eventsOptions = options["events"]
+        eventsOptions = options.get("events")
         if eventsOptions is None:
             eventsOptions = defaultOptions["events"]
 

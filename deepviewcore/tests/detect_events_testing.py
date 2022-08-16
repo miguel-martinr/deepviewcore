@@ -11,8 +11,10 @@ def action(data):
   global events
   events.update(data[1])
 
-v.process(action=action, showContours=False)
+v.process(action=action, showContours=False, options = {
+  "events": {"minArea": 200}
+})
 
-print("Se han detectado" + str(len(events)) + "eventos en los segundos: " + str(events.keys()))
+print("Se han detectado " + str(len(events)) + " eventos en los segundos: " + str(events.keys()))
 
 
