@@ -23,6 +23,10 @@ Video.process(... options = options)
 
 El valor por defecto es 100.
 
+
+## 0.1.6 Corrección de errores
+* Se corrigió un error de iteradores que provocaba la no detección de partículas.
+
 ## Enlaces de interés
 [DeepView: Backend](https://github.com/miguel-martinr/DeepView)
 
