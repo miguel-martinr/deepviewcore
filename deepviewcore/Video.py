@@ -84,7 +84,7 @@ class Video:
                 detectedEvents.update({currentSecond: events})
                 nextFrameToLookForEvents = (currentSecond + 1) * frameRate
 
-            # Save processing results in instance
+            # Save processing results in instance            
             self.data[DataFields.frames].append(objects)
             
 
@@ -180,8 +180,8 @@ class Video:
         # st = time.time()
 
         contours = detect_objects_in_frame(frame, options=options)
-        objects = map(lambda cnt: {"circle": cv.minEnclosingCircle(
-            cnt), "area": cv.contourArea(cnt)}, contours)        
+        objects = list(map(lambda cnt: {"circle": cv.minEnclosingCircle(
+            cnt), "area": cv.contourArea(cnt)}, contours))        
         
 
         # et = time.time()
