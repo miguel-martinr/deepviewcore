@@ -60,7 +60,7 @@ class Video:
             eventsOptions = defaultOptions["events"]
 
         nextFrameToLookForEvents = 0
-        detectedEvents = {}
+        detectedEvents = []
 
         while cap.isOpened() and self.keep_processing:
             ret, frame = cap.read()
@@ -80,8 +80,8 @@ class Video:
           
 
             if events:
+                detectedEvents.extend([self.objectToEvent(object) for object in events])
                 currentSecond = self.getSecondForFrameIndex(self.getCurrentFrameIndex())
-                detectedEvents.update({currentSecond: events})
                 nextFrameToLookForEvents = (currentSecond + 1) * frameRate
 
             # Save processing results in instance            
@@ -95,7 +95,7 @@ class Video:
                 action([detectedObjects, detectedEvents])
 
                 self.data[DataFields.frames] = []
-                detectedEvents = {}
+                detectedEvents = []
 
             # Draw contours
             if showContours:
@@ -166,7 +166,12 @@ class Video:
 
         return events
   
-
+    def objectToEvent(self, object):
+      return {
+        "frame_index": self.getCurrentFrameIndex(),
+        "circle": object["circle"],
+        "area": object["area"],
+      }
 
     def processFrame(self, options, frame=None):
 
