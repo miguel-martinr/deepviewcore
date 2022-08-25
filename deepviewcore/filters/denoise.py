@@ -1,5 +1,8 @@
-def denoise(frame, options = None):
-    return frame
+def denoise(frame, options=None):
+  if frame is None:
+      return None
+  
+  return frame
 
 
 filter = {
