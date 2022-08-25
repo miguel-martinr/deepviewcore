@@ -30,6 +30,8 @@ El valor por defecto es 100.
 
 ## 0.1.7 Detección de eventos + Skip dark frames
 
+## 0.1.8 Detección de eventos + Skip dark frames
+
 ## Enlaces de interés
 [DeepView: Backend](https://github.com/miguel-martinr/DeepView)
 
