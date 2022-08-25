@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "deepviewcore"
-version = "0.1.7"
+version = "0.1.8"
 description = "Underwater images processing package made for DeepView project (University of La Laguna - Spain)"
 authors = ["Miguel Martín <alu0101209777@ull.edu.es>"]
 packages = [
